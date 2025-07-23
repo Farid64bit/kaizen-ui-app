@@ -1,6 +1,5 @@
 # Update the planner.html file with full drag-and-drop task system and visual enhancements
-
-updated_planner_html = """<section class="tab active" id="planner">
+<section class="tab active" id="planner">
   <h2>Daily Planner</h2>
 
   <label for="mood">Mood</label>
@@ -115,9 +114,4 @@ addTask(); // Initial task
   color: gray;
 }
 </style>
-"""
 
-with open("/mnt/data/kaizen-ui-app/tabs/planner.html", "w") as f:
-    f.write(updated_planner_html)
-
-"/mnt/data/kaizen-ui-app/tabs/planner.html (Daily Planner updated with drag & drop + checkbox + mood slider)"
