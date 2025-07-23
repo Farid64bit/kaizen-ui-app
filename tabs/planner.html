@@ -1,11 +1,13 @@
-<section class="tab active" id="planner">
+# Update the planner.html file with full drag-and-drop task system and visual enhancements
+
+updated_planner_html = """<section class="tab active" id="planner">
   <h2>Daily Planner</h2>
 
   <label for="mood">Mood</label>
   <input type="range" id="mood" name="mood" min="1" max="5" step="1" />
 
   <h3>Tasks</h3>
-  <div id="task-list"></div>
+  <div id="task-list" class="task-container"></div>
   <button onclick="addTask()">Add Task</button>
 </section>
 
@@ -15,30 +17,40 @@ let taskCounter = 0;
 function addTask(text = '', estimate = '') {
   const taskList = document.getElementById('task-list');
   const taskId = 'task-' + taskCounter++;
+  
   const wrapper = document.createElement('div');
   wrapper.className = 'task-item';
   wrapper.draggable = true;
-  wrapper.ondragstart = e => {
-    e.dataTransfer.setData('text/plain', taskId);
-    wrapper.id = taskId;
+  wrapper.id = taskId;
+
+  wrapper.ondragstart = (e) => {
+    e.dataTransfer.setData('text/plain', wrapper.id);
   };
-  wrapper.ondragover = e => e.preventDefault();
-  wrapper.ondrop = e => {
+
+  wrapper.ondragover = (e) => {
     e.preventDefault();
-    const draggedId = e.dataTransfer.getData('text');
+    wrapper.style.borderTop = "2px dashed #888";
+  };
+
+  wrapper.ondragleave = () => {
+    wrapper.style.borderTop = "";
+  };
+
+  wrapper.ondrop = (e) => {
+    e.preventDefault();
+    const draggedId = e.dataTransfer.getData('text/plain');
     const draggedEl = document.getElementById(draggedId);
+    wrapper.style.borderTop = "";
     taskList.insertBefore(draggedEl, wrapper);
   };
 
+  const dragHandle = document.createElement('span');
+  dragHandle.innerText = '☰';
+  dragHandle.style.cursor = 'grab';
+  dragHandle.style.marginRight = '0.5rem';
+
   const checkbox = document.createElement('input');
   checkbox.type = 'checkbox';
-  checkbox.onchange = () => {
-    if (checkbox.checked) {
-      input.classList.add('completed');
-    } else {
-      input.classList.remove('completed');
-    }
-  };
 
   const input = document.createElement('input');
   input.type = 'text';
@@ -54,6 +66,15 @@ function addTask(text = '', estimate = '') {
   remove.innerText = '✖';
   remove.onclick = () => taskList.removeChild(wrapper);
 
+  checkbox.onchange = () => {
+    if (checkbox.checked) {
+      input.classList.add('completed');
+    } else {
+      input.classList.remove('completed');
+    }
+  };
+
+  wrapper.appendChild(dragHandle);
   wrapper.appendChild(checkbox);
   wrapper.appendChild(input);
   wrapper.appendChild(time);
@@ -61,5 +82,42 @@ function addTask(text = '', estimate = '') {
   taskList.appendChild(wrapper);
 }
 
-addTask(); // initial task
+addTask(); // Initial task
 </script>
+
+<style>
+.task-container {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.task-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: #fff;
+  padding: 0.5rem;
+  border-radius: 8px;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+}
+.task-item input[type="text"] {
+  flex: 1;
+  padding: 0.5rem;
+}
+.task-item input[type="number"] {
+  width: 60px;
+}
+.task-item input[type="checkbox"] {
+  transform: scale(1.2);
+}
+.task-item .completed {
+  text-decoration: line-through;
+  color: gray;
+}
+</style>
+"""
+
+with open("/mnt/data/kaizen-ui-app/tabs/planner.html", "w") as f:
+    f.write(updated_planner_html)
+
+"/mnt/data/kaizen-ui-app/tabs/planner.html (Daily Planner updated with drag & drop + checkbox + mood slider)"
