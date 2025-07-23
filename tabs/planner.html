@@ -1,0 +1,65 @@
+<section class="tab active" id="planner">
+  <h2>Daily Planner</h2>
+
+  <label for="mood">Mood</label>
+  <input type="range" id="mood" name="mood" min="1" max="5" step="1" />
+
+  <h3>Tasks</h3>
+  <div id="task-list"></div>
+  <button onclick="addTask()">Add Task</button>
+</section>
+
+<script>
+let taskCounter = 0;
+
+function addTask(text = '', estimate = '') {
+  const taskList = document.getElementById('task-list');
+  const taskId = 'task-' + taskCounter++;
+  const wrapper = document.createElement('div');
+  wrapper.className = 'task-item';
+  wrapper.draggable = true;
+  wrapper.ondragstart = e => {
+    e.dataTransfer.setData('text/plain', taskId);
+    wrapper.id = taskId;
+  };
+  wrapper.ondragover = e => e.preventDefault();
+  wrapper.ondrop = e => {
+    e.preventDefault();
+    const draggedId = e.dataTransfer.getData('text');
+    const draggedEl = document.getElementById(draggedId);
+    taskList.insertBefore(draggedEl, wrapper);
+  };
+
+  const checkbox = document.createElement('input');
+  checkbox.type = 'checkbox';
+  checkbox.onchange = () => {
+    if (checkbox.checked) {
+      input.classList.add('completed');
+    } else {
+      input.classList.remove('completed');
+    }
+  };
+
+  const input = document.createElement('input');
+  input.type = 'text';
+  input.placeholder = 'Task description';
+  input.value = text;
+
+  const time = document.createElement('input');
+  time.type = 'number';
+  time.placeholder = 'min';
+  time.value = estimate;
+
+  const remove = document.createElement('button');
+  remove.innerText = '✖';
+  remove.onclick = () => taskList.removeChild(wrapper);
+
+  wrapper.appendChild(checkbox);
+  wrapper.appendChild(input);
+  wrapper.appendChild(time);
+  wrapper.appendChild(remove);
+  taskList.appendChild(wrapper);
+}
+
+addTask(); // initial task
+</script>
